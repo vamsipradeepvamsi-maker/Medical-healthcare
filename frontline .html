@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medicare - Health Services</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    body {
+      line-height: 1.6;
+      color: #333;
+    }
+    header {
+      background: #0b4ea2;
+      color: white;
+      padding: 20px 10%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h2 {
+      font-size: 22px;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+    }
+    nav ul li {
+      margin-left: 20px;
+    }
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      font-size: 16px;
+    }
+    .btn {
+      background: #00c853;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .hero {
+      background: linear-gradient(to right, #0b4ea2, #2364d2);
+      color: white;
+      padding: 60px 10%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .hero-text {
+      max-width: 50%;
+    }
+    .hero-text h1 {
+      font-size: 40px;
+      margin-bottom: 20px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin: 40px 10%;
+    }
+    .stat-box {
+      background: #f5f5f5;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .stat-box h3 {
+      font-size: 22px;
+      color: #0b4ea2;
+    }
+    .services {
+      padding: 50px 10%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .service-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 30px;
+      text-align: center;
+    }
+    .testimonials, .blog, .footer {
+      padding: 50px 10%;
+    }
+    .footer {
+      background: #0b4ea2;
+      color: white;
+      text-align: center;
+    }
+    .footer p {
+      margin: 5px 0;
+    }
+    @media(max-width: 900px) {
+      .hero {
+        flex-direction: column;
+        text-align: center;
+      }
+      .hero-text {
+        max-width: 100%;
+      }
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+      .services {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <h2>Medicare</h2>
+    <nav>
+      <ul>
+        <li><a href="file:///C:/Users/vamsi/OneDrive/Desktop/docter%20EMRFILE.html">OUT PATIENT DEPARTMRNT[OPD]</a></li>
+        <li><a href="https://www.geeksforgeeks.org/biology/dialysis-definition/">About</a></li>
+        <li><a href="https://hmfw.ap.gov.in/108-call-center.aspx">Services</a></li>
+        <li><a href="https://www.doctor.com/search">Doctors</a></li>
+        <li><a href="https://www.instagram.com/vamsipradeep_0/">Blog</a></li>
+        <li><a href="https://www.youtube.com/@vamsipradeep_0/shorts">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="file:///C:/Users/vamsi/OneDrive/Desktop/docter%20EMRFILE.html" class="btn">Sign Up</a>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>108 SERVICES <br> <b>Medical Health</b></h1>
+      <p>Our service and the work efficiency of our staff are the reasons for our success.</p><br>
+      
+      <a href="#" class="btn">FREE CHEKUP</a>
+    </div>
+    <div>
+      <img src="https://cdn-icons-png.flaticon.com/512/387/387561.png" alt="Doctors" width="250">
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats">
+    <div class="stat-box">
+      <h3>2M+</h3>
+      <a href="https://healthcare-in-india.net/wp-content/uploads/2020/08/Patient-Experience-in-India.pdf">Blog<p>Happy Patients</p></a>
+    </div>
+    <div class="stat-box">
+      <h3>100K+ 108 </h3>
+      <p><a href="https://hmfw.ap.gov.in/108-call-center.aspx">108 AMBULANCES</a><br>All over india </p>
+    </div>
+    <div class="stat-box">
+      <h3>500+</h3>
+      <p><a href="https://www.youtube.com/shorts/-EIsztQqmbs">CUST0MER OPINION</a></p>
+    </div>
+    <div class="stat-box">
+      <h3>20000+</h3>
+      <p><a href="https://www.iciciprulife.com/insurance/insurance-importance.html">INSURANCES</a></p>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="services">
+    <div class="service-card">
+      <h3>Women Health Care</h3>
+      <p>We provide complete healthcare services for women.<br>Women’s health care and lifestyle focus on maintaining overall well-being through balanced nutrition,<br> regular physical activity, mental health care, and preventive checkups.<br> A healthy lifestyle includes managing stress,<br> getting adequate sleep, and staying active to reduce risks of chronic diseases. <br>Regular screenings, reproductive health care, and self-care practices play a key role in empowering women to lead healthier,<br> longer, and more fulfilling lives.</p>
+    </div>
+    <div class="service-card">
+      <h3>Neurology</h3>
+      <p>Our expert doctors provide the best treatments.<br>Neurology focuses on the diagnosis and treatment of disorders affecting the brain, spine, and nervous system.<br> We provide the best treatment with advanced technology, expert neurologists,<br> and personalized care to ensure effective management of conditions like stroke, epilepsy, migraines,<br> and movement disorders, helping patients achieve a healthier and improved quality of life.</p>
+    </div>
+    <div class="service-card">
+      <h3>Emergency Care</h3>
+      <h3>108 services<h3>
+      <p>24/7 emergency medical care available anytime.</p>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials">
+    <h2>What Our Clients Say</h2>
+    <p>“Best hospital services with highly skilled doctors. Truly satisfied.”</p>
+    <p>- Marry Clark, Facebook</p>
+  </section>
+
+  <!-- Blog -->
+  <section class="blog">
+    <h2>Blog Insights</h2>
+    <p>Quick facts to improve your health and lifestyle.</p>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2025 Medicare. All rights reserved.</p>
+    <p>Email: support@vamsipradeepvamsi.com | Phone:9059806782</p>
+  </footer>
+
+</body>
+</html>

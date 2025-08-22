@@ -1,0 +1,558 @@
+Python 3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)] on win32
+Enter "help" below or click "Help" above for more information.
+
+<!DOCTYPE html>
+<!-- saved from url=(0073)file:///C:/Users/vamsi/Downloads/doctor_dialysis_single_file_web_app.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doctor Dialysis | Mini EMR</title>
+  <style>
+    :root{
+      --bg:#0f172a;       /* slate-900*/
+      --panel:#111827;    /* gray- 900*/
+      --muted:#1f2937;    /* gray- 800*/
+      --text:#e5e7eb;     /* gray- 200*/
+      --text-dim:#cbd5e1; /* slate-300*/
+      --accent:#22c55e;   /* green-500*/
+      --warn:#f59e0b;     /* amber-500*/
+      --danger:#ef4444;   /* red-  500*/
+      --ok:#3b82f6;       /* blue- 500*/
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,var(--bg),#020617);color:var(--text);font:14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"}
+    header{position:sticky;top:0;z-index:10;backdrop-filter:saturate(1.2) blur(6px);background:rgba(2,6,23,.8);border-bottom:1px solid #1f2937}
+    .wrap{max-width:1100px;margin-inline:auto;padding:16px}
+    h1{margin:0;font-size:clamp(1.2rem,2.5vw,1.9rem)}
+    .sub{color:var(--text-dim);font-size:.95em}
+    main{max-width:1100px;margin:18px auto;padding:0 16px;display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+    @media (max-width:900px){main{grid-template-columns:1fr}}
+    section{background:linear-gradient(180deg,var(--panel),#0b1220);border:1px solid #1f2937;border-radius:var(--radius);padding:16px;box-shadow:0 20px 40px rgba(0,0,0,.25)}
+    section h2{margin:0 0 10px 0;font-size:1.05rem}
+    label{display:block;margin:10px 0 4px;color:var(--text-dim)}
+    input,select,textarea{width:100%;padding:10px 12px;border:1px solid #273249;background:#0b1324;color:var(--text);border-radius:10px;outline:none}
+    textarea{min-height:72px;resize:vertical}
+    .row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{border:0;padding:10px 14px;border-radius:12px;font-weight:600;cursor:pointer}
+    .primary{background:var(--accent);color:#052e16}
+    .ghost{background:transparent;border:1px solid #1f2937;color:var(--text)}
+    .warn{background:var(--warn);color:#1f1300}
+    .danger{background:var(--danger)}
+    .ok{background:var(--ok)}
+    .cards{display:grid;grid-template-columns:1fr;gap:10px;max-height:65vh;overflow:auto;padding-right:2px}
+    .card{border:1px solid #1f2937;background:linear-gradient(180deg,#0b1324,#0c1629);border-radius:14px;padding:12px}
+    .flex{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .tag{display:inline-block;border:1px solid #1f2937;background:#0a1427;border-radius:999px;padding:4px 10px;color:var(--text-dim);font-size:.8em}
+    .muted{color:var(--text-dim)}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .foot{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .search{position:relative}
+    .search input{padding-left:40px}
+    .search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.6}
+    .hr{height:1px;background:#1f2937;margin:12px 0}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#132038;border:1px solid #223150;margin-right:6px;margin-top:6px;font-size:.8em}
+    .stat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .stat div{background:#0a1427;border:1px solid #1f2937;padding:10px;border-radius:12px}
+    .right-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .small{font-size:.85em}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="flex">
+        <div>
+          <h1>Doctor Dialysis — Mini EMR</h1>
+          <div class="sub">Lightweight, offline-only tool to register patients, schedule hemodialysis, and record session notes. Data stays in your browser (localStorage).</div>
+        </div>
+        <div class="right-actions">
+          <button class="ghost" id="btnExport">Export JSON</button>
+          <button class="ghost" id="btnImport">Import JSON</button>
+          <button class="ghost" id="btnPrint">Print Summary</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>Patient &amp; Session</h2>
+      <div class="stat">
+        <div><div class="muted small">Patients</div><div id="statPatients" style="font-weight:700;font-size:1.1em">2</div></div>
+        <div><div class="muted small">Sessions</div><div id="statSessions" style="font-weight:700;font-size:1.1em">2</div></div>
+        <div><div class="muted small">Today</div><div id="statToday" style="font-weight:700;font-size:1.1em">2</div></div>
+        <div><div class="muted small">UF Total (L)</div><div id="statUF" style="font-weight:700;font-size:1.1em">60</div></div>
+      </div>
+      <div class="hr"></div>
+      <form id="dialysisForm">
+...         <div class="row">
+...           <div>
+...             <label>Patient ID</label>
+...             <input required="" id="patientId" placeholder="e.g., KIMS-2025-001">
+...           </div>
+...           <div>
+...             <label>Patient Name</label>
+...             <input required="" id="patientName" placeholder="Full name">
+...           </div>
+...         </div>
+...         <div class="row">
+...           <div>
+...             <label>Age</label>
+...             <input type="number" min="0" id="age" placeholder="Years">
+...           </div>
+...           <div>
+...             <label>Sex</label>
+...             <select id="sex">
+...               <option value="">Select</option>
+...               <option>Male</option>
+...               <option>Female</option>
+...               <option>Other</option>
+...             </select>
+...           </div>
+...         </div>
+...         <div class="row">
+...           <div>
+...             <label>Diagnosis </label>
+...             <input id="dx" placeholder="ESRD on HD, AKI, etc.">
+...           </div>
+...           <div>
+...             <label>Allergies</label>
+...             <input id="allergies" placeholder="e.g., Heparin, Latex">
+...           </div>
+...         </div>
+...         <div class="row">
+...           <div>
+...             <label>Access</label>
+...             <select id="access">
+...               <option value="">Select</option>
+...               <option>AV Fistula</option>
+...               <option>AV Graft</option>
+...               <option>Permcath</option>
+...               <option>Temporary Catheter</option>
+...             </select>
+...           </div>
+...           <div>
+            <label>Dialyzer</label>
+            <select id="dialyzer">
+              <option value="">Select</option>
+              <option>HF80</option>
+              <option>FX-80</option>
+              <option>FX-60</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="row3">
+          <div>
+            <label>Session Date &amp; Time</label>
+            <input type="datetime-local" id="sessionDT">
+          </div>
+          <div>
+            <label>Dry Weight (kg)</label>
+            <input type="number" step="0.1" id="dryWt">
+          </div>
+          <div>
+            <label>UF Goal (L)</label>
+            <input type="number" step="0.1" id="ufGoal">
+          </div>
+        </div>
+        <div class="row3">
+          <div>
+            <label>Blood Flow (QB, mL/min)</label>
+            <input type="number" id="qb">
+          </div>
+          <div>
+            <label>Dialysate Flow (QD, mL/min)</label>
+            <input type="number" id="qd">
+          </div>
+          <div>
+            <label>Heparin (IU)</label>
+            <input type="number" id="heparin">
+          </div>
+        </div>
+        <div class="grid2">
+          <div>
+            <label>Pre Vitals</label>
+            <textarea id="preVitals" placeholder="BP, HR, RR, Temp"></textarea>
+          </div>
+          <div>
+            <label>Post Vitals</label>
+            <textarea id="postVitals" placeholder="BP, HR, RR, Temp"></textarea>
+          </div>
+        </div>
+        <div class="grid2">
+          <div>
+            <label>Complications</label>
+            <textarea id="complications" placeholder="Cramps, Hypotension, Headache, Access issue..."></textarea>
+          </div>
+          <div>
+            <label>Medications Given</label>
+            <textarea id="meds" placeholder="Erythropoietin, Iron sucrose, Antibiotics..."></textarea>
+          </div>
+        </div>
+        <label>Notes</label>
+        <textarea id="notes" placeholder="Any special instructions"></textarea>
+        
+        <div class="btns">
+          <button type="submit" class="primary">Save Session</button>
+          <button type="button" class="ok" id="btnNew">New</button>
+          <button type="button" class="warn" id="btnClear">Clear Form</button>
+        </div>
+      </form>
+    </section>
+
+    <section>
+      <h2>Sessions</h2>
+      <div class="search">
+        <input id="q" placeholder="Search by patient name, ID, date...">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle></svg>
+      </div>
+      <div class="btns" style="margin-top:8px">
+        <button class="ghost" id="btnToday">Today</button>
+        <button class="ghost" id="btnAll">All</button>
+        <button class="ghost" id="btnDemo">Load Demo Data</button>
+        <button class="danger" id="btnReset">Delete All</button>
+      </div>
+      <div class="hr"></div>
+      <div class="cards" id="cards">
+    <div class="card">
+      <div class="flex">
+        <div style="font-weight:700"><span data-field="patientName">kongalavamsipradeep</span> <span class="muted">(<span data-field="patientId">kims2025</span>)</span></div>
+        <div class="tag" data-field="sessionDT">8/22/2025, 8:22:00 PM</div>
+      </div>
+      <div class="muted small" data-field="dx"></div>
+      <div class="muted small">Access: <span data-field="access"></span> · Dialyzer: <span data-field="dialyzer">HF80</span> · UF Goal: <span data-field="ufGoal">0</span> L</div>
+      <div class="pill">QB: <span data-field="qb">65</span></div>
+      <div class="pill">QD: <span data-field="qd">85</span></div>
+      <div class="pill">Heparin: <span data-field="heparin">0</span> IU</div>
+      <div class="hr"></div>
+      <div class="small"><strong>Pre:</strong> <span data-field="preVitals">hr</span></div>
+      <div class="small"><strong>Post:</strong> <span data-field="postVitals">Bp</span></div>
+      <div class="small"><strong>Meds:</strong> <span data-field="meds">Iron deficiency</span></div>
+      <div class="small"><strong>Complications:</strong> <span data-field="complications">hadache</span></div>
+      <div class="small"><strong>Notes:</strong> <span data-field="notes">You have to achieve exercise intensity of lifting weights</span></div>
+      <div class="foot">
+        <button class="ok" data-action="edit">Edit</button>
+        <button class="warn" data-action="print">Print</button>
+        <button class="danger" data-action="delete">Delete</button>
+      </div>
+    </div>
+  
+    <div class="card">
+      <div class="flex">
+        <div style="font-weight:700"><span data-field="patientName">Adithya</span> <span class="muted">(<span data-field="patientId">4455455564</span>)</span></div>
+        <div class="tag" data-field="sessionDT">8/22/2025, 8:22:00 PM</div>
+      </div>
+      <div class="muted small" data-field="dx">stomach pain</div>
+      <div class="muted small">Access: <span data-field="access">AV Fistula</span> · Dialyzer: <span data-field="dialyzer">HF80</span> · UF Goal: <span data-field="ufGoal">60</span> L</div>
+      <div class="pill">QB: <span data-field="qb">80</span></div>
+      <div class="pill">QD: <span data-field="qd">90</span></div>
+      <div class="pill">Heparin: <span data-field="heparin">34</span> IU</div>
+      <div class="hr"></div>
+      <div class="small"><strong>Pre:</strong> <span data-field="preVitals">temp</span></div>
+      <div class="small"><strong>Post:</strong> <span data-field="postVitals">bp</span></div>
+      <div class="small"><strong>Meds:</strong> <span data-field="meds">iron</span></div>
+      <div class="small"><strong>Complications:</strong> <span data-field="complications">cramps</span></div>
+      <div class="small"><strong>Notes:</strong> <span data-field="notes">nothing</span></div>
+      <div class="foot">
+        <button class="ok" data-action="edit">Edit</button>
+        <button class="warn" data-action="print">Print</button>
+        <button class="danger" data-action="delete">Delete</button>
+      </div>
+    </div>
+  </div>
+    </section>
+  </main>
+
+  <template id="cardTpl"></template>
+
+  <script>
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
+
+    const LS_KEY = 'doctor_dialysis_v1';
+
+    const state = {
+      items: load(),
+      filter: 'all',
+      query: ''
+    };
+
+    function load(){
+      try{ return JSON.parse(localStorage.getItem(LS_KEY)||'[]'); }catch(e){ return []; }
+    }
+    function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state.items)); refresh(); }
+
+    function uid(){ return Math.random().toString(36).slice(2,9); }
+
+    function formToObj(){
+      const obj = {
+        id: $('#recId')?.value || uid(),
+        patientId: $('#patientId').value.trim(),
+        patientName: $('#patientName').value.trim(),
+        age: +($('#age').value||0) || null,
+        sex: $('#sex').value,
+        dx: $('#dx').value.trim(),
+        allergies: $('#allergies').value.trim(),
+        access: $('#access').value,
+        dialyzer: $('#dialyzer').value,
+        sessionDT: $('#sessionDT').value,
+        dryWt: +($('#dryWt').value||0) || null,
+        ufGoal: +($('#ufGoal').value||0) || 0,
+        qb: +($('#qb').value||0) || 0,
+        qd: +($('#qd').value||0) || 0,
+        heparin: +($('#heparin').value||0) || 0,
+        preVitals: $('#preVitals').value.trim(),
+        postVitals: $('#postVitals').value.trim(),
+        complications: $('#complications').value.trim(),
+        meds: $('#meds').value.trim(),
+        notes: $('#notes').value.trim(),
+        createdAt: Date.now()
+      };
+      return obj;
+    }
+
+    function objToForm(o){
+      $('#patientId').value = o.patientId||'';
+      $('#patientName').value = o.patientName||'';
+      $('#age').value = o.age??'';
+      $('#sex').value = o.sex||'';
+      $('#dx').value = o.dx||'';
+      $('#allergies').value = o.allergies||'';
+      $('#access').value = o.access||'';
+      $('#dialyzer').value = o.dialyzer||'';
+      $('#sessionDT').value = o.sessionDT||'';
+      $('#dryWt').value = o.dryWt??'';
+      $('#ufGoal').value = o.ufGoal??'';
+      $('#qb').value = o.qb??'';
+      $('#qd').value = o.qd??'';
+      $('#heparin').value = o.heparin??'';
+      $('#preVitals').value = o.preVitals||'';
+      $('#postVitals').value = o.postVitals||'';
+      $('#complications').value = o.complications||'';
+      $('#meds').value = o.meds||'';
+      $('#notes').value = o.notes||'';
+      if(!$('#recId')){
+        const hidden = document.createElement('input');
+        hidden.type='hidden'; hidden.id='recId';
+        $('#dialysisForm').appendChild(hidden);
+      }
+      $('#recId').value = o.id;
+    }
+
+    function clearForm(){
+      $('#dialysisForm').reset();
+      if($('#recId')) $('#recId').remove();
+    }
+
+    function validate(o){
+      const errs = [];
+      if(!o.patientId) errs.push('Patient ID is required');
+      if(!o.patientName) errs.push('Patient name is required');
+      if(!o.sessionDT) errs.push('Session date/time is required');
+      if(o.ufGoal<0) errs.push('UF goal cannot be negative');
+      if(o.qb<0||o.qd<0||o.heparin<0) errs.push('Flows/Heparin cannot be negative');
+      if(errs.length){ alert(errs.join('\n')); return false; }
+      return true;
+    }
+
+    function renderCards(){
+      const list = filtered();
+      const cards = $('#cards');
+      cards.innerHTML = '';
+      list.forEach(item=>{
+        const tpl = $('#cardTpl').content.cloneNode(true);
+        $$("[data-field]", tpl).forEach(el=>{
+          const key = el.getAttribute('data-field');
+          el.textContent = key==='sessionDT' ? fmtDT(item.sessionDT) : (item[key] ?? '');
+        });
+        const root = tpl.children[0];
+        root.querySelector('[data-action="edit"]').onclick = ()=>{ objToForm(item); window.scrollTo({top:0,behavior:'smooth'}); };
+        root.querySelector('[data-action="delete"]').onclick = ()=>{
+          if(confirm('Delete this session?')){ state.items = state.items.filter(x=>x.id!==item.id); save(); }
+        };
+        root.querySelector('[data-action="print"]').onclick = ()=>{ printOne(item); };
+        cards.appendChild(tpl);
+      });
+    }
+
+    function filtered(){
+      let arr = [...state.items];
+      if(state.filter==='today'){
+        const d = new Date();
+        const y = d.getFullYear(), m=d.getMonth(), day=d.getDate();
+        arr = arr.filter(x=>{
+          if(!x.sessionDT) return false;
+          const t = new Date(x.sessionDT);
+          return t.getFullYear()===y && t.getMonth()===m && t.getDate()===day;
+        });
+      }
+      if(state.query){
+        const q = state.query.toLowerCase();
+        arr = arr.filter(x=>[
+          x.patientName, x.patientId, x.dx, x.access, x.dialyzer, x.sessionDT
+        ].filter(Boolean).some(v=>String(v).toLowerCase().includes(q)));
+      }
+      // most recent first
+      arr.sort((a,b)=> new Date(b.sessionDT||b.createdAt) - new Date(a.sessionDT||a.createdAt));
+      return arr;
+    }
+
+    function fmtDT(s){ if(!s) return ''; const d = new Date(s); return d.toLocaleString(); }
+
+    function refresh(){
+      renderCards();
+      // stats
+      const uniquePatients = new Set(state.items.map(x=>x.patientId)).size;
+      $('#statPatients').textContent = uniquePatients;
+      $('#statSessions').textContent = state.items.length;
+      const todayCount = filteredByToday().length;
+      $('#statToday').textContent = todayCount;
+      const uf = state.items.reduce((a,b)=>a+(+b.ufGoal||0),0);
+      $('#statUF').textContent = (Math.round(uf*10)/10).toString();
+    }
+
+    function filteredByToday(){
+      const d = new Date();
+      const y = d.getFullYear(), m=d.getMonth(), day=d.getDate();
+      return state.items.filter(x=>{
+        if(!x.sessionDT) return false;
+        const t = new Date(x.sessionDT);
+        return t.getFullYear()===y && t.getMonth()===m && t.getDate()===day;
+      });
+    }
+
+    function printOne(o){
+      const w = window.open('', '_blank');
+      w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Dialysis Summary</title>
+        <style>body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:24px;color:#111}h1{font-size:20px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:8px;vertical-align:top}small{color:#444}</style>
+      </head><body>`);
+      w.document.write(`<h1>Dialysis Session Summary</h1>
+        <small>Generated: ${new Date().toLocaleString()}</small>
+        <table>
+        <tr><th>Patient</th><td>${o.patientName} (${o.patientId}), ${o.age||''} ${o.sex||''}</td></tr>
+        <tr><th>Diagnosis</th><td>${o.dx||''}</td></tr>
+        <tr><th>Allergies</th><td>${o.allergies||''}</td></tr>
+        <tr><th>Access</th><td>${o.access||''}</td></tr>
+        <tr><th>Dialyzer</th><td>${o.dialyzer||''}</td></tr>
+        <tr><th>Session Date/Time</th><td>${fmtDT(o.sessionDT)}</td></tr>
+        <tr><th>Dry Weight</th><td>${o.dryWt??''} kg</td></tr>
+        <tr><th>UF Goal</th><td>${o.ufGoal??''} L</td></tr>
+        <tr><th>QB / QD</th><td>${o.qb??''} / ${o.qd??''} mL/min</td></tr>
+        <tr><th>Heparin</th><td>${o.heparin??''} IU</td></tr>
+        <tr><th>Pre Vitals</th><td>${o.preVitals||''}</td></tr>
+        <tr><th>Post Vitals</th><td>${o.postVitals||''}</td></tr>
+        <tr><th>Complications</th><td>${o.complications||''}</td></tr>
+        <tr><th>Medications</th><td>${o.meds||''}</td></tr>
+        <tr><th>Notes</th><td>${o.notes||''}</td></tr>
+        </table>`);
+      w.document.write('</body></html>');
+      w.document.close();
+      w.focus();
+      w.print();
+    }
+
+    // Event wiring
+    $('#dialysisForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const obj = formToObj();
+      if(!validate(obj)) return;
+      const idx = state.items.findIndex(x=>x.id===obj.id);
+      if(idx>=0) state.items[idx] = obj; else state.items.push(obj);
+      save();
+      clearForm();
+    });
+
+    $('#btnNew').onclick = ()=> clearForm();
+    $('#btnClear').onclick = ()=>{
+      if(confirm('Clear current form?')) clearForm();
+    };
+
+    $('#btnToday').onclick = ()=>{ state.filter='today'; refresh(); };
+    $('#btnAll').onclick = ()=>{ state.filter='all'; refresh(); };
+
+    $('#q').addEventListener('input', (e)=>{ state.query = e.target.value; renderCards(); });
+
+    $('#btnReset').onclick = ()=>{
+      if(confirm('Delete ALL saved sessions? This cannot be undone.')){
+        state.items=[]; save();
+      }
+    };
+
+    $('#btnExport').onclick = ()=>{
+      const blob = new Blob([JSON.stringify(state.items,null,2)],{type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'doctor-dialysis-data.json';
+      a.click();
+    };
+
+    $('#btnImport').onclick = ()=>{
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json,application/json';
+      input.onchange = async ()=>{
+        const file = input.files[0];
+        if(!file) return;
+        const text = await file.text();
+        try{
+          const arr = JSON.parse(text);
+          if(!Array.isArray(arr)) throw new Error('Invalid file');
+          if(!confirm('Import will replace your current data. Continue?')) return;
+          state.items = arr; save();
+        }catch(err){ alert('Import failed: '+err.message); }
+      };
+      input.click();
+    };
+
+    $('#btnPrint').onclick = ()=>{
+      const list = filtered();
+      if(!list.length){ alert('No sessions to print.'); return; }
+      // Simple combined print
+      const w = window.open('', '_blank');
+      w.document.write(`<!DOCTYPE html><html><head><meta charset='utf-8'><title>Dialysis — Print</title>
+      <style>body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:24px;color:#111}h2{margin:0 0 6px 0}table{border-collapse:collapse;width:100%;margin-bottom:20px}td,th{border:1px solid #ccc;padding:6px;vertical-align:top}small{color:#444}</style></head><body>`);
+      w.document.write(`<h1>Dialysis Sessions (${state.filter==='today'?'Today':'All'})</h1><small>Generated: ${new Date().toLocaleString()}</small>`);
+      list.forEach(o=>{
+        w.document.write(`<h2>${o.patientName} <small>(${o.patientId})</small></h2>`);
+        w.document.write(`<table>
+          <tr><th>Date/Time</th><td>${fmtDT(o.sessionDT)}</td></tr>
+          <tr><th>Diagnosis</th><td>${o.dx||''}</td></tr>
+          <tr><th>Access / Dialyzer</th><td>${o.access||''} · ${o.dialyzer||''}</td></tr>
+          <tr><th>UF Goal (L)</th><td>${o.ufGoal??''}</td></tr>
+          <tr><th>QB/QD</th><td>${o.qb??''}/${o.qd??''} mL/min</td></tr>
+          <tr><th>Heparin</th><td>${o.heparin??''} IU</td></tr>
+          <tr><th>Pre Vitals</th><td>${o.preVitals||''}</td></tr>
+          <tr><th>Post Vitals</th><td>${o.postVitals||''}</td></tr>
+          <tr><th>Meds</th><td>${o.meds||''}</td></tr>
+          <tr><th>Complications</th><td>${o.complications||''}</td></tr>
+          <tr><th>Notes</th><td>${o.notes||''}</td></tr>
+        </table>`);
+      });
+      w.document.write('</body></html>');
+      w.document.close();
+      w.focus();
+      w.print();
+    };
+
+    $('#btnDemo').onclick = ()=>{
+      if(!confirm('Load demo patients & sessions?')) return;
+      const now = new Date();
+      const pad = n=> String(n).padStart(2,'0');
+      const dt = (d,h)=> `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(h)}:00`;
+      state.items = [
+        {id:uid(),patientId:'HD-001',patientName:'Ravi Kumar',age:56,sex:'Male',dx:'ESRD on HD',allergies:'',access:'AV Fistula',dialyzer:'FX-80',sessionDT:dt(now,9),dryWt:62.5,ufGoal:2.5,qb:300,qd:500,heparin:3000,preVitals:'BP 150/90, HR 86, SpO2 98%',postVitals:'BP 130/80, HR 78',complications:'None',meds:'EPO 4000 IU',notes:'Stable',createdAt:Date.now()},
+        {id:uid(),patientId:'HD-002',patientName:'Suma Devi',age:44,sex:'Female',dx:'ESRD Diabetic nephropathy',allergies:'Penicillin',access:'Permcath',dialyzer:'HF80',sessionDT:dt(now,13),dryWt:58.2,ufGoal:2.0,qb:250,qd:500,heparin:2500,preVitals:'BP 140/88, HR 92',postVitals:'BP 120/76, HR 80',complications:'Mild cramps',meds:'Iron sucrose 100mg',notes:'Encourage fluids restriction',createdAt:Date.now()},
+        {id:uid(),patientId:'AKI-01',patientName:'Mohammed Ali',age:36,sex:'Male',dx:'AKI - Sepsis',allergies:'Latex',access:'Temporary Catheter',dialyzer:'FX-60',sessionDT:dt(new Date(now.getTime()-86400000),10),dryWt:null,ufGoal:1.2,qb:200,qd:500,heparin:0,preVitals:'BP 110/70, HR 102',postVitals:'BP 118/72, HR 96',complications:'Hypotension episode',meds:'Norepinephrine infusion as per ICU',notes:'Heparin-free dialysis',createdAt:Date.now()}
+      ];
+      save();
+    };
+
+    // init
+    refresh();
+  </script>
+
+
